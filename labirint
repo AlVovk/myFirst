@@ -1,0 +1,64 @@
+from pygame import *
+window = display.set_mode((700, 500))
+display.set_caption('labirint')
+back = (119, 210, 223)
+run = True
+
+class GameSprite(sprite.Sprite):
+    def __init__(self,picture,w,h,x,y): 
+        super().__init__()
+        self.image = transform.scale(image.load(picture),(w,h))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+class Player(GameSprite):
+   #метод, в котором реализовано управление спрайтом по кнопкам стрелочкам клавиатуры
+   def __init__(self, player_image, player_x, player_y, size_x, size_y, player_x_speed,player_y_speed):
+       # Вызываем конструктор класса (Sprite):
+       GameSprite.__init__(self, player_image, player_x, player_y,size_x, size_y)
+  
+       self.x_speed = player_x_speed
+       self.y_speed = player_y_speed
+   def update(self):
+       ''' перемещает персонажа, применяя текущую горизонтальную и вертикальную скорость'''
+       # сначала движение по горизонтали
+       self.rect.x += self.x_speed
+       self.rect.y += self.y_speed
+
+wall = GameSprite('platform_h.png', 50, 350, 200, 90)
+packman = Player('hero.png', 50, 80, 80, 80, 0, 0)
+
+while run:
+    time.delay(50)
+    window.fill(back)#закрашиваем окно цветом
+
+    wall.reset()
+    packman.reset()
+    for e in event.get():
+        if e.type == QUIT:
+            run = False
+        elif e.type == KEYDOWN:
+            if e.key == K_LEFT:
+                packman.x_speed = -5
+            elif e.key == K_RIGHT:
+                packman.x_speed = 5
+            elif e.key == K_UP:
+                packman.y_speed = -5
+            elif e.key == K_DOWN:
+                packman.y_speed = 5
+        elif e.type == KEYUP:
+            if e.key == K_LEFT:
+                packman.x_speed = 0
+            elif e.key == K_RIGHT:
+                packman.x_speed = 0
+            elif e.key == K_UP:
+                packman.y_speed = 0
+            elif e.key == K_DOWN:
+                packman.y_speed = 0
+    
+     #включаем движение
+    packman.update()
+
+    display.update()
